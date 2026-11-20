@@ -1,0 +1,43 @@
+@startuml uml_sequence
+title Діаграма послідовності виклику ask() (Варіант 2, B-dense, Е2 CrossEncoder)
+skinparam backgroundColor white
+
+actor "Користувач / eval" as User
+participant "src/rag.py\nask()" as RAG
+participant "index/B.json\nInMemoryVectorStore" as Store
+participant "all-mpnet-base-v2\nHuggingFaceEmbeddings" as Emb
+participant "ms-marco-MiniLM-L-6-v2\nCrossEncoder (Е2)" as CE
+participant "Ollama\nqwen2.5:3b" as LLM
+
+User -> RAG : ask(question, store, k=5, threshold=0.52)
+activate RAG
+
+RAG -> Store : similarity_search_with_score(question, k=5)
+activate Store
+Store -> Emb : embed_query(question)
+activate Emb
+Emb --> Store : query_vector (d=768)
+deactivate Emb
+Store --> RAG : hits [(Document, cosine_score), ...]
+deactivate Store
+
+opt Додатковий експеримент Е2 (src/experiment.py: fetch_k=20)
+  RAG -> CE : predict([(question, doc.page_content), ...])
+  activate CE
+  CE --> RAG : cross_encoder_scores -> top-5
+  deactivate CE
+end
+
+alt not hits або hits[0][1] < 0.52
+  RAG --> User : {"answer": "НЕМАЄ У ДОКУМЕНТІ", "t_gen": 0.0}
+else hits[0][1] >= 0.52
+  RAG -> RAG : format_docs(docs) -> "[стор. N] text..."
+  RAG -> LLM : rag_chain.invoke({context, question})\n(temperature=0, seed=2)
+  activate LLM
+  LLM --> RAG : українська відповідь із [стор. N]
+  deactivate LLM
+  RAG --> User : {"answer", "pages", "top1_score", "t_retr", "t_gen"}
+end
+
+deactivate RAG
+@enduml

@@ -1,0 +1,60 @@
+@startuml uml_components
+title Діаграма компонентів RAG-рішення (Варіант 2 — Principles of Data Science)
+skinparam componentStyle rectangle
+skinparam backgroundColor white
+
+package "Етап 1: Індексація (Offline)" {
+  [src/config.py\nVARIANT=2, CHUNKS=A(192,24)/B(384,48)\nBEST_CONFIG=B (B-dense), TOP_K=5, THRESHOLD=0.52] as cfg
+  [src/ingest.py\nload_pages()] as ingest
+  [src/chunking.py\nmake_chunks()] as chunking
+  [src/index.py\nget_embeddings(), load_store()] as indexer
+
+  artifact "data/document.pdf\n(стор. 1-200)" as pdf
+  artifact "data/pages.json" as pages_json
+  artifact "data/chunks_A.json\ndata/chunks_B.json" as chunks_json
+  database "index/A.json\nindex/B.json\n(InMemoryVectorStore)" as vstore
+}
+
+package "Етап 2: Пошук, Оцінювання та Відповідь (Online)" {
+  [src/eval_retrieval.py\nBM25Okapi, rrf(), hit_at_k()] as eval_ret
+  [src/experiment.py\nЕ2: CrossEncoder rerank] as exp_e2
+  [src/rag.py\nask(), rag_chain, plain_chain] as rag
+  [src/eval_answers.py\nметрики та графіки 05-06] as eval_ans
+  artifact "eval/questions.csv\n(15 запитань)" as q_csv
+  artifact "eval/answers.csv\neval/answers_labeled.csv" as ans_csv
+}
+
+cloud "HuggingFace / Local Cache" {
+  node "all-mpnet-base-v2\n(d=768, max_seq=384)" as emb_model
+  node "ms-marco-MiniLM-L-6-v2\n(CrossEncoder, E2)" as ce_model
+}
+
+node "Ollama Local Server\nqwen2.5:3b (temp=0, seed=2)" as ollama
+
+pdf --> ingest
+cfg ..> ingest
+cfg ..> chunking
+cfg ..> indexer
+ingest --> pages_json
+ingest ..> emb_model : AutoTokenizer
+pages_json --> chunking
+chunking ..> emb_model : AutoTokenizer
+chunking --> chunks_json
+chunks_json --> indexer
+indexer --> emb_model : encode()
+indexer --> vstore : dump()
+
+q_csv --> eval_ret
+vstore --> eval_ret : dense
+chunks_json --> eval_ret : BM25
+vstore --> exp_e2 : top-20
+exp_e2 --> ce_model : predict()
+
+q_csv --> rag
+cfg ..> rag
+vstore --> rag : similarity_search_with_score(k=5)
+rag --> emb_model : query embedding
+rag --> ollama : rag_chain.invoke()
+rag --> ans_csv
+ans_csv --> eval_ans
+@enduml
