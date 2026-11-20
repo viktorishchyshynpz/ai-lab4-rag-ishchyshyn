@@ -12,6 +12,6 @@ CHUNKS = {"A": (192, 24), "B": (384, 48)}
 
 LLM_MODEL = "qwen2.5:3b"
 BEST_CONFIG = "B"        
-TOP_K = 4                 
-THRESHOLD = 0.0           
+TOP_K = 5                
+THRESHOLD = 0.52         
 SEED = VARIANT
