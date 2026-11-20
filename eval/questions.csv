@@ -1,0 +1,16 @@
+qid,question,pages,type,reference_answer
+q01,"What are the critical values for 90%, 95%, and 99% confidence levels in Table 4.2?",160,fact,"1.645 for 90%, 1.960 for 95%, and 2.575 for 99% confidence"
+q02,What minimum sample size is required by the central limit theorem for any population distribution to approximate a normal distribution of sample means?,159,fact,At least 30
+q03,"On what exact date did an outlier jump occur in the US construction employment dataset in Example 2.6, and from what value to what value?",88,fact,"March 28, 1990, jumping from approximately 5,400 to 9,500"
+q04,"In the Bayes' Theorem medical screening example, what is the probability that a patient actually has cancer given a positive screening test result?",137,fact,13%
+q05,What is the difference between a DataFrame and a Series in Pandas?,47,definition,"DataFrame stores multi-column tabular data, whereas Series stores single-column data"
+q06,What is the interquartile range (IQR) and what does it measure?,127,definition,"The difference between the third quartile and the first quartile, measuring the spread of the middle 50% of data while excluding outliers"
+q07,What is a p-value in hypothesis testing and what numerical range can it take?,179,definition,The probability of obtaining a sample statistic as extreme as or more extreme than the observed value assuming the null hypothesis is true; between 0 and 1 inclusive
+q08,What is the difference between MCAR and MAR missing data?,87,definition,"MCAR (missing completely at random) is unrelated to any other variables, whereas MAR (missing at random) is related to other variables in the dataset"
+q09,"According to the empirical rule for a normal distribution, what percentages of values fall within one, two, and three standard deviations of the mean?",145;146,multi_page,"About 68% within one standard deviation, 95% within two, and 99.7% within three standard deviations"
+q10,"How are quartiles and IQR used to detect potential outliers, and what upper bound flagged the $5,500,000 home price in the example?",127;128,multi_page,"Lower and upper bounds are computed using 1.5 times the IQR; the upper bound of 1,159,375 flagged $5,500,000 as a potential outlier"
+q11,"Which structured file format works best for client-server web API communication, and which is preferred for deeply nested hierarchical records?",31,paraphrase,"JSON is best suited for exchanging data between a user and a server, and XML is best suited for complex hierarchical datasets"
+q12,Which lossless binary encoding technique shrinks file sizes for video and images without discarding any original information?,99,paraphrase,Huffman coding
+q13,What are the six sequential phases of the CRISP-DM data mining methodology?,,unanswerable,
+q14,How does the MapReduce programming model partition data across nodes in Apache Hadoop?,,unanswerable,
+q15,What default retention period does Apache Kafka use for topic log segments?,,unanswerable,
