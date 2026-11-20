@@ -1,0 +1,3 @@
+system,Hit@1,Hit@3,Hit@5,MRR,avg_latency_ms
+B-dense (базовий),0.83,0.92,1.00,0.88,59.3
+B-dense + E2 CrossEncoder,0.58,0.92,1.00,0.77,973.1
